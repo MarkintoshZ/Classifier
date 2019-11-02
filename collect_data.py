@@ -9,12 +9,12 @@ video_capture = cv2.VideoCapture(0)
 while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
+    frame = cv2.flip(frame, 1)
 
-    # Resize frame of video to 1/4 size for faster face recognition processing
-    small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+    image = frame[0:300, 0:300]
+    cv2.imwrite('./Datasets/B/' + str(round(time.time(), 2)) + '.jpg', image)
 
-    cv2.imwrite('./Datasets/B/' + str(round(time.time(), 2)) + '.jpg', small_frame)
-
+    cv2.rectangle(frame, (0, 0), (300, 300), (0, 0, 255), 2)
     # Display the resulting image
     cv2.imshow('Video', frame)
 

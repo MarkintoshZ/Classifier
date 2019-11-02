@@ -14,16 +14,18 @@ video_capture = cv2.VideoCapture(0)
 while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
+    frame = cv2.flip(frame, 1)
 
-    frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-    face = Image.fromarray(frame)
-    face = face.resize((85, 50), Image.ANTIALIAS)
+    image = frame[0:300, 0:300]
+    face = Image.fromarray(image)
+    face = face.resize((100, 100), Image.ANTIALIAS)
     data = np.asarray(face)
     data = data / 255
-    print(round(model.predict(data.reshape(1, 50, 85, 3))[0][0]))
+    print(round(model.predict(data.reshape(1, 100, 100, 3))[0][0]))
 
+    cv2.rectangle(frame, (0, 0), (300, 300), (0, 0, 255), 2)
     # Display the resulting image
-    # cv2.imshow('Video', face)
+    cv2.imshow('Video', frame)
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):

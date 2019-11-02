@@ -1,5 +1,5 @@
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
-from keras.layers import Dense, Dropout, UpSampling2D, pooling, Flatten, Conv2D, Reshape, Input, GaussianNoise
+from keras.layers import Dense, Dropout, UpSampling2D, MaxPool2D, Flatten, Conv2D, Reshape, Input, GaussianNoise
 from keras.models import Sequential, Model, load_model
 from keras.optimizers import Adadelta
 from sklearn.model_selection import train_test_split
@@ -19,7 +19,7 @@ for image_path in os.listdir(path):
     except OSError:
         continue
 
-    image = image.resize((85, 50), Image.ANTIALIAS)
+    image = image.resize((100, 100), Image.ANTIALIAS)
     data = np.asarray(image)
     data = data / 255
     win.append(data)
@@ -32,23 +32,27 @@ for image_path in os.listdir(path):
     except OSError:
         continue
 
-    image = image.resize((85, 50), Image.ANTIALIAS)
+    image = image.resize((100, 100), Image.ANTIALIAS)
     data = np.asarray(image)
     data = data / 255
     normal.append(data)
 
-X = np.array(win + normal).reshape(-1, 50, 85, 3)
+X = np.array(win + normal).reshape(-1, 100, 100, 3)
 y = np.concatenate([np.zeros(len(win)), np.ones(len(normal))]).reshape((-1, 1))
 
 print(X.shape)
 print(y.shape)
 
 # this is our input placeholder
-input_img = Input(shape=(50, 85, 3))
+input_img = Input(shape=(100, 100, 3))
 noise = GaussianNoise(0.1)(input_img)
 conv_0 = Conv2D(16, 3)(noise)
 conv_1 = Conv2D(16, 3)(conv_0)
-flat = Flatten()(conv_1)
+pool_0 = MaxPool2D(2)(conv_1)
+conv_2 = Conv2D(16, 3)(pool_0)
+conv_3 = Conv2D(16, 3)(conv_2)
+pool_1 = MaxPool2D(2)(conv_3)
+flat = Flatten()(pool_1)
 dense_0 = Dense(64, activation='relu')(flat)
 dense_1 = Dense(16, activation='relu')(dense_0)
 out = Dense(1, activation='sigmoid')(dense_1)
