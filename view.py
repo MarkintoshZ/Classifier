@@ -21,7 +21,7 @@ while True:
     face = face.resize((100, 100), Image.ANTIALIAS)
     data = np.asarray(face)
     data = data / 255
-    print(round(model.predict(data.reshape(1, 100, 100, 3))[0][0]))
+    print(model.predict(data.reshape(1, 100, 100, 3))[0])
 
     cv2.rectangle(frame, (0, 0), (300, 300), (0, 0, 255), 2)
     # Display the resulting image

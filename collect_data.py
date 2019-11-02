@@ -2,6 +2,7 @@ import cv2
 from PIL import Image
 import time
 import numpy as np
+import sys
 
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
@@ -12,7 +13,7 @@ while True:
     frame = cv2.flip(frame, 1)
 
     image = frame[0:300, 0:300]
-    cv2.imwrite('./Datasets/B/' + str(round(time.time(), 2)) + '.jpg', image)
+    cv2.imwrite('./Datasets/' +sys.argv[1]+ '/' + str(round(time.time(), 2)) + '.jpg', image)
 
     cv2.rectangle(frame, (0, 0), (300, 300), (0, 0, 255), 2)
     # Display the resulting image
