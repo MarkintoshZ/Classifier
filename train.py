@@ -15,7 +15,7 @@ path = './Datasets/A'
 win = []
 for image_path in os.listdir(path):
     try:
-        image = Image.open(os.path.join(path, image_path)).convert('L')
+        image = Image.open(os.path.join(path, image_path))
     except OSError:
         continue
 
@@ -28,7 +28,7 @@ path = './Datasets/B'
 normal = []
 for image_path in os.listdir(path):
     try:
-        image = Image.open(os.path.join(path, image_path)).convert('L')
+        image = Image.open(os.path.join(path, image_path))
     except OSError:
         continue
 
@@ -37,14 +37,14 @@ for image_path in os.listdir(path):
     data = data / 255
     normal.append(data)
 
-X = np.array(win + normal).reshape(-1, 50, 85, 1)
+X = np.array(win + normal).reshape(-1, 50, 85, 3)
 y = np.concatenate([np.zeros(len(win)), np.ones(len(normal))]).reshape((-1, 1))
 
 print(X.shape)
 print(y.shape)
 
 # this is our input placeholder
-input_img = Input(shape=(50, 85, 1))
+input_img = Input(shape=(50, 85, 3))
 noise = GaussianNoise(0.1)(input_img)
 conv_0 = Conv2D(16, 3)(noise)
 conv_1 = Conv2D(16, 3)(conv_0)
@@ -60,9 +60,8 @@ cnn.compile(loss='binary_crossentropy',
             metrics=['accuracy'])
 
 cnn.summary()
-cnn.fit(X, y, batch_size=32, epochs=20)
+cnn.fit(X, y, batch_size=32, epochs=10)
 cnn.save('cnn.h5')
 
 from sklearn.metrics import mean_squared_error, confusion_matrix
-mean_squared_error(y, cnn.predict(X))
-confusion_matrix(y, cnn.predict(X))
+print(mean_squared_error(y, cnn.predict(X)))

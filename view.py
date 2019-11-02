@@ -16,11 +16,11 @@ while True:
     ret, frame = video_capture.read()
 
     frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-    face = Image.fromarray(frame).convert('L')
+    face = Image.fromarray(frame)
     face = face.resize((85, 50), Image.ANTIALIAS)
     data = np.asarray(face)
     data = data / 255
-    print(model.predict(data.reshape(1, 50, 85, 1)))
+    print(round(model.predict(data.reshape(1, 50, 85, 3))[0][0]))
 
     # Display the resulting image
     # cv2.imshow('Video', face)
